@@ -1,17 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
 import { Button, Container, Typography } from '@mui/material';
 import TextField from "@mui/material/TextField";
 import './App.css'
 
 function App() {
   const [name, setName] = useState("");
+  const[movieArray, setMovieArray] = useState([]);
+
+  useEffect(() => {
+  // Everything in here gets run once on first page load
+  fetch("http://www.omdbapi.com/?s="+ name + "&apikey=cd29db11", requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("got data", data);
+      setMovieArray(data.Search);
+    })
+    .catch((error) => console.log("error", error));
+}, []);
 
   const requestOptions = {
   method: "GET",
   redirect: "follow"
 };
 
-  const[movieArray, setMovieArray] = useState([]);
+  
   
 
   return (
@@ -45,7 +57,7 @@ function App() {
     </Container>
 
     <Container>
-      {movieArray.map((movie) => (
+      {movieArray && movieArray.map((movie) => (
         <Typography>
           {movie.Title}
         </Typography>
